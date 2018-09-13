@@ -38,7 +38,7 @@ module Data.HashMap.Monoidal
     , filterWithKey
     ) where
 
-import Prelude hiding (lookup, map)
+import Prelude hiding (lookup, map, pred)
 import Data.Maybe (fromMaybe)
 import Data.Semigroup
 import Data.Foldable (Foldable)
