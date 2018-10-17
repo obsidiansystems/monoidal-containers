@@ -128,7 +128,6 @@ module Data.Map.Monoidal.Strict
 
 import Prelude hiding (null, lookup, map, foldl, foldr, filter)
 
-import Data.Align
 import Data.Coerce (coerce)
 import Data.Semigroup
 import Data.Foldable (Foldable)
@@ -162,14 +161,6 @@ deriving instance (Ord k) => Eq1 (MonoidalMap k)
 deriving instance (Ord k) => Ord1 (MonoidalMap k)
 deriving instance (Show k) => Show1 (MonoidalMap k)
 #endif
-
-instance (ToJSON k, ToJSON m) => ToJSON (MonoidalMap k m) where
-  toJSON = toJSON . M.toList . getMonoidalMap
-
-instance (FromJSON k, FromJSON m, Ord k) => FromJSON (MonoidalMap k m) where
-  parseJSON r = do
-    res <- parseJSON r
-    fmap MonoidalMap . sequence . M.fromListWithKey (fail "duplicate key in JSON deserialization of AppendMap") . fmap (fmap return) $ res
 
 type instance Index (MonoidalMap k a) = k
 type instance IxValue (MonoidalMap k a) = a
@@ -236,13 +227,6 @@ instance (Ord k, Semigroup a) => IsList.IsList (MonoidalMap k a) where
     toList = M.toList . unpack
     {-# INLINE toList #-}
 #endif
-
-instance (Ord k) => Align (MonoidalMap k) where
-    nil = empty
-    align (MonoidalMap x) (MonoidalMap y) = MonoidalMap (align x y)
-    alignWith f (MonoidalMap x) (MonoidalMap y) = MonoidalMap (alignWith f x y)
-
-instance (Ord k) => Unalign (MonoidalMap k)
 
 -- | /O(1)/. A map with a single element.
 singleton :: k -> a -> MonoidalMap k a
